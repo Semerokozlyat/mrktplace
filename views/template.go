@@ -7,6 +7,17 @@ import (
 	"net/http"
 )
 
+type Template struct {
+	htmlTpl *template.Template
+}
+
+func Must(t Template, err error) Template {
+	if err != nil {
+		panic(err)
+	}
+	return t
+}
+
 func ParseTemplateFile(filePath string) (Template, error) {
 	t, err := template.ParseFiles(filePath)
 	if err != nil {
@@ -15,10 +26,6 @@ func ParseTemplateFile(filePath string) (Template, error) {
 	return Template{
 		htmlTpl: t,
 	}, nil
-}
-
-type Template struct {
-	htmlTpl *template.Template
 }
 
 func (t Template) Execute(rw http.ResponseWriter, data interface{}) {

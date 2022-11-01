@@ -2,24 +2,23 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"mrktplace/controllers"
+	"mrktplace/templates"
 	"mrktplace/views"
 	"net/http"
-	"path/filepath"
-
-	"github.com/go-chi/chi/v5"
 )
 
 func main() {
 	router := chi.NewRouter()
 
-	tpl := views.Must(views.ParseTemplateFile(filepath.Join("templates", "home.gohtml")))
+	tpl := views.Must(views.ParseTemplateFS(templates.FS, "home.gohtml"))
 	router.Get("/", controllers.StaticHandler(tpl))
 
-	tpl = views.Must(views.ParseTemplateFile(filepath.Join("templates", "contact.gohtml")))
+	tpl = views.Must(views.ParseTemplateFS(templates.FS, "contact.gohtml"))
 	router.Get("/contact", controllers.StaticHandler(tpl))
 
-	tpl = views.Must(views.ParseTemplateFile(filepath.Join("templates", "faq.gohtml")))
+	tpl = views.Must(views.ParseTemplateFS(templates.FS, "faq.gohtml"))
 	router.Get("/faq", controllers.StaticHandler(tpl))
 
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {

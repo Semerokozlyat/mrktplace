@@ -19,20 +19,20 @@ func Must(t Template, err error) Template {
 	return t
 }
 
-func ParseTemplateFS(fs fs.FS, fileName string) (Template, error) {
-	t, err := template.ParseFS(fs, fileName)
+func ParseTemplateFS(fs fs.FS, fileNames ...string) (Template, error) {
+	t, err := template.ParseFS(fs, fileNames...)
 	if err != nil {
-		return Template{}, fmt.Errorf("parse template file %s on FS: %w", fileName, err)
+		return Template{}, fmt.Errorf("parse template file %s on FS: %w", fileNames, err)
 	}
 	return Template{
 		htmlTpl: t,
 	}, nil
 }
 
-func ParseTemplateFile(filePath string) (Template, error) {
-	t, err := template.ParseFiles(filePath)
+func ParseTemplateFile(filePaths ...string) (Template, error) {
+	t, err := template.ParseFiles(filePaths...)
 	if err != nil {
-		return Template{}, fmt.Errorf("parse template file %s: %w", filePath, err)
+		return Template{}, fmt.Errorf("parse template file %s: %w", filePaths, err)
 	}
 	return Template{
 		htmlTpl: t,

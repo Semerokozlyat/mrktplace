@@ -19,7 +19,7 @@ func main() {
 	router.Get("/contact", controllers.StaticHandler(tpl))
 
 	tpl = views.Must(views.ParseTemplateFS(templates.FS, "faq.gohtml"))
-	router.Get("/faq", controllers.StaticHandler(tpl))
+	router.Get("/faq", controllers.FAQ(tpl))
 
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)

@@ -1,3 +1,4 @@
+{{template "header"}}
 <h1>FAQ page</h1>
 <p>This page contains the most frequent questions and answers to them.</p>
 <ul>
@@ -10,3 +11,4 @@
 {{ define "qa" }}
     <li><b>{{ .Question }}</b> {{ .Answer }}</li>
 {{ end }}
+{{template "footer"}}

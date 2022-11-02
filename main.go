@@ -12,13 +12,13 @@ import (
 func main() {
 	router := chi.NewRouter()
 
-	tpl := views.Must(views.ParseTemplateFS(templates.FS, "home.gohtml", "layout-parts.gohtml"))
+	tpl := views.Must(views.ParseTemplateFS(templates.FS, "home.gohtml", "tailwind.gohtml"))
 	router.Get("/", controllers.StaticHandler(tpl))
 
-	tpl = views.Must(views.ParseTemplateFS(templates.FS, "contact.gohtml", "layout-parts.gohtml"))
+	tpl = views.Must(views.ParseTemplateFS(templates.FS, "contact.gohtml", "tailwind.gohtml"))
 	router.Get("/contact", controllers.StaticHandler(tpl))
 
-	tpl = views.Must(views.ParseTemplateFS(templates.FS, "faq.gohtml", "layout-parts.gohtml"))
+	tpl = views.Must(views.ParseTemplateFS(templates.FS, "faq.gohtml", "tailwind.gohtml"))
 	router.Get("/faq", controllers.FAQ(tpl))
 
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {

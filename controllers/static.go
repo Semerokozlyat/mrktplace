@@ -1,17 +1,16 @@
 package controllers
 
 import (
-	"mrktplace/views"
 	"net/http"
 )
 
-func StaticHandler(tpl views.Template) http.HandlerFunc {
+func StaticHandler(tpl Template) http.HandlerFunc {
 	return func(rw http.ResponseWriter, r *http.Request) {
 		tpl.Execute(rw, nil)
 	}
 }
 
-func FAQ(tpl views.Template) http.HandlerFunc {
+func FAQ(tpl Template) http.HandlerFunc {
 	qaData := []struct {
 		Question string
 		Answer   string

@@ -3,12 +3,16 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+
+	"mrktplace/models"
 )
 
 type Users struct {
 	Templates struct {
 		New Template
 	}
+
+	UserService *models.UserService
 }
 
 func (u Users) New(rw http.ResponseWriter, r *http.Request) {

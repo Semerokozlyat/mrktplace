@@ -37,7 +37,10 @@ func main() {
 	}
 	usersC.Templates.New = views.Must(views.ParseTemplateFS(
 		templates.FS, "signup.gohtml", "tailwind.gohtml"))
+	usersC.Templates.SignIn = views.Must(views.ParseTemplateFS(
+		templates.FS, "signin.gohtml", "tailwind.gohtml"))
 	router.Get("/signup", usersC.New)
+	router.Get("/signin", usersC.SignIn)
 	router.Post("/users", usersC.Create)
 
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {

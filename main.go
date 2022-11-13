@@ -41,6 +41,7 @@ func main() {
 		templates.FS, "signin.gohtml", "tailwind.gohtml"))
 	router.Get("/signup", usersC.New)
 	router.Get("/signin", usersC.SignIn)
+	router.Post("/signin", usersC.ProcessSignIn)
 	router.Post("/users", usersC.Create)
 
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {

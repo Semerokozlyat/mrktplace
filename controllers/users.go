@@ -43,3 +43,19 @@ func (u Users) SignIn(rw http.ResponseWriter, r *http.Request) {
 	data.Email = r.FormValue("email")
 	u.Templates.SignIn.Execute(rw, data)
 }
+
+func (u Users) ProcessSignIn(rw http.ResponseWriter, r *http.Request) {
+	var data struct {
+		Email    string
+		Password string
+	}
+	data.Email = r.FormValue("email")
+	data.Password = r.FormValue("password")
+	user, err := u.UserService.Authenticate(data.Email, data.Password)
+	if err != nil {
+		fmt.Println(err.Error())
+		http.Error(rw, "User authentication failed", http.StatusUnauthorized)
+		return
+	}
+	fmt.Fprintf(rw, "User authenticated: %+v", user)
+}

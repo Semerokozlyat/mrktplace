@@ -43,6 +43,7 @@ func main() {
 	router.Get("/signin", usersC.SignIn)
 	router.Post("/signin", usersC.ProcessSignIn)
 	router.Post("/users", usersC.Create)
+	router.Get("/users/me", usersC.CurrentUser)
 
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)

@@ -21,7 +21,7 @@ func (u Users) New(rw http.ResponseWriter, r *http.Request) {
 		Email string
 	}
 	data.Email = r.FormValue("email")
-	u.Templates.New.Execute(rw, data)
+	u.Templates.New.Execute(rw, r, data)
 }
 
 func (u Users) Create(rw http.ResponseWriter, r *http.Request) {
@@ -41,7 +41,7 @@ func (u Users) SignIn(rw http.ResponseWriter, r *http.Request) {
 		Email string
 	}
 	data.Email = r.FormValue("email")
-	u.Templates.SignIn.Execute(rw, data)
+	u.Templates.SignIn.Execute(rw, r, data)
 }
 
 func (u Users) ProcessSignIn(rw http.ResponseWriter, r *http.Request) {
@@ -58,9 +58,10 @@ func (u Users) ProcessSignIn(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	cookie := http.Cookie{
-		Name:  "email",
-		Value: user.Email,
-		Path:  "/",
+		Name:     "email",
+		Value:    user.Email,
+		Path:     "/",
+		HttpOnly: true,
 	}
 	http.SetCookie(rw, &cookie)
 	fmt.Fprintf(rw, "User authenticated: %+v", user)

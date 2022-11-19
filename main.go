@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
+	"github.com/gorilla/csrf"
+
 	"mrktplace/controllers"
 	"mrktplace/models"
 	"mrktplace/templates"
 	"mrktplace/views"
-	"net/http"
 )
 
 func main() {
@@ -48,6 +51,10 @@ func main() {
 	router.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
 	})
+
+	csrfKey := "23jfnrhy57lh6sbnydpe7503khtq230U"
+	csrfMiddleware := csrf.Protect([]byte(csrfKey), csrf.Secure(false))
+
 	fmt.Println("Starting the server on :3000...")
-	http.ListenAndServe(":3000", router)
+	http.ListenAndServe(":3000", csrfMiddleware(router))
 }

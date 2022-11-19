@@ -1,9 +1,11 @@
 package views
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/gorilla/csrf"
 	"html/template"
+	"io"
 	"io/fs"
 	"log"
 	"net/http"
@@ -24,8 +26,8 @@ func ParseTemplateFS(fs fs.FS, fileNames ...string) (Template, error) {
 	tpl := template.New(fileNames[0])
 	tpl = tpl.Funcs(
 		template.FuncMap{
-			"csrfField": func() template.HTML {
-				return `<!-- TODO: a placeholder for real CSRF field function -->`
+			"csrfField": func() (template.HTML, error) {
+				return "", fmt.Errorf("csrfField is not implemented")
 			},
 		},
 	)
@@ -63,10 +65,13 @@ func (t Template) Execute(rw http.ResponseWriter, r *http.Request, data interfac
 			},
 		},
 	)
-	err = htmlTpl.Execute(rw, data)
+	// TODO: remember this could consume much memory on large pages
+	var buf bytes.Buffer
+	err = htmlTpl.Execute(&buf, data)
 	if err != nil {
 		log.Printf("executing template: %v", err)
 		http.Error(rw, "Failed to execute template file", http.StatusInternalServerError)
 		return
 	}
+	io.Copy(rw, &buf)
 }

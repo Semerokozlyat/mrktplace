@@ -13,7 +13,8 @@ type Users struct {
 		SignIn Template
 	}
 
-	UserService *models.UserService
+	UserService    *models.UserService
+	SessionService *models.SessionService
 }
 
 func (u Users) New(rw http.ResponseWriter, r *http.Request) {
@@ -33,6 +34,20 @@ func (u Users) Create(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "User cannot be created", http.StatusInternalServerError)
 		return
 	}
+	session, err := u.SessionService.Create(user.ID)
+	if err != nil {
+		fmt.Println(err.Error())
+		http.Redirect(rw, r, "/signin", http.StatusFound)
+		return
+	}
+	cookie := http.Cookie{
+		Name:     "session",
+		Value:    session.Token,
+		Path:     "/",
+		HttpOnly: true,
+	}
+	http.SetCookie(rw, &cookie)
+	http.Redirect(rw, r, "/users/me", http.StatusFound)
 	fmt.Fprintf(rw, "User created: %+v", user)
 }
 
@@ -57,21 +72,34 @@ func (u Users) ProcessSignIn(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "User authentication failed", http.StatusUnauthorized)
 		return
 	}
+	session, err := u.SessionService.Create(user.ID)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(rw, "Failed to create user session", http.StatusInternalServerError)
+		return
+	}
 	cookie := http.Cookie{
-		Name:     "email",
-		Value:    user.Email,
+		Name:     "session",
+		Value:    session.Token,
 		Path:     "/",
 		HttpOnly: true,
 	}
 	http.SetCookie(rw, &cookie)
-	fmt.Fprintf(rw, "User authenticated: %+v", user)
+	http.Redirect(rw, r, "/users/me", http.StatusFound)
 }
 
 func (u Users) CurrentUser(rw http.ResponseWriter, r *http.Request) {
-	emailCookie, err := r.Cookie("email")
+	tokenCookie, err := r.Cookie("session")
 	if err != nil {
-		http.Error(rw, "Cookie cannot be read: "+err.Error(), http.StatusInternalServerError)
+		fmt.Println("Failed to read session cookie: " + err.Error())
+		http.Redirect(rw, r, "/signin", http.StatusFound)
 		return
 	}
-	fmt.Fprintf(rw, "Current user: %s", emailCookie.Value)
+	user, err := u.SessionService.User(tokenCookie.Value)
+	if err != nil {
+		fmt.Println("Failed to read session cookie: " + err.Error())
+		http.Redirect(rw, r, "/signin", http.StatusFound)
+		return
+	}
+	fmt.Fprintf(rw, "Current user: %s", user.Email)
 }

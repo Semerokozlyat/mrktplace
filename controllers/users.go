@@ -40,13 +40,7 @@ func (u Users) Create(rw http.ResponseWriter, r *http.Request) {
 		http.Redirect(rw, r, "/signin", http.StatusFound)
 		return
 	}
-	cookie := http.Cookie{
-		Name:     "session",
-		Value:    session.Token,
-		Path:     "/",
-		HttpOnly: true,
-	}
-	http.SetCookie(rw, &cookie)
+	setCookie(rw, CookieSession, session.Token)
 	http.Redirect(rw, r, "/users/me", http.StatusFound)
 	fmt.Fprintf(rw, "User created: %+v", user)
 }
@@ -78,13 +72,7 @@ func (u Users) ProcessSignIn(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, "Failed to create user session", http.StatusInternalServerError)
 		return
 	}
-	cookie := http.Cookie{
-		Name:     "session",
-		Value:    session.Token,
-		Path:     "/",
-		HttpOnly: true,
-	}
-	http.SetCookie(rw, &cookie)
+	setCookie(rw, CookieSession, session.Token)
 	http.Redirect(rw, r, "/users/me", http.StatusFound)
 }
 
@@ -97,7 +85,7 @@ func (u Users) CurrentUser(rw http.ResponseWriter, r *http.Request) {
 	}
 	user, err := u.SessionService.User(tokenCookie.Value)
 	if err != nil {
-		fmt.Println("Failed to read session cookie: " + err.Error())
+		fmt.Println("Failed to get user by session cookie: " + err.Error())
 		http.Redirect(rw, r, "/signin", http.StatusFound)
 		return
 	}

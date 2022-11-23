@@ -89,5 +89,5 @@ func (u Users) CurrentUser(rw http.ResponseWriter, r *http.Request) {
 		http.Redirect(rw, r, "/signin", http.StatusFound)
 		return
 	}
-	fmt.Fprintf(rw, "Current user: %s", user.Email)
+	fmt.Fprintf(rw, "Current user: %+v", user)
 }

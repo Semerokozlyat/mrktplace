@@ -1,6 +1,11 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+
+	"mrktplace/rand"
+)
 
 type Session struct {
 	ID        int
@@ -14,8 +19,16 @@ type SessionService struct {
 }
 
 func (ss *SessionService) Create(userID int) (*Session, error) {
-	// TODO: implement
-	return nil, nil
+	token, err := rand.SessionToken()
+	if err != nil {
+		return nil, fmt.Errorf("generate token: %w", err)
+	}
+	// TODO: save session to DB, generate token hash
+	s := Session{
+		UserID: userID,
+		Token:  token,
+	}
+	return &s, nil
 }
 
 func (ss *SessionService) User(sessionToken string) (*User, error) {

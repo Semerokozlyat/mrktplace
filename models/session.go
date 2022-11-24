@@ -7,6 +7,10 @@ import (
 	"mrktplace/rand"
 )
 
+const (
+	MinBytesPerToken = 32 // The minimum number of bytes used for each session token.
+)
+
 type Session struct {
 	ID        int
 	UserID    int
@@ -15,11 +19,16 @@ type Session struct {
 }
 
 type SessionService struct {
-	DB *sql.DB
+	DB            *sql.DB
+	BytesPerToken int
 }
 
 func (ss *SessionService) Create(userID int) (*Session, error) {
-	token, err := rand.SessionToken()
+	bytesPerToken := ss.BytesPerToken
+	if bytesPerToken < MinBytesPerToken {
+		bytesPerToken = MinBytesPerToken
+	}
+	token, err := rand.String(bytesPerToken)
 	if err != nil {
 		return nil, fmt.Errorf("generate token: %w", err)
 	}

@@ -49,6 +49,7 @@ func main() {
 	router.Get("/signup", usersC.New)
 	router.Get("/signin", usersC.SignIn)
 	router.Post("/signin", usersC.ProcessSignIn)
+	router.Post("/signout", usersC.ProcessSignOut)
 	router.Post("/users", usersC.Create)
 	router.Get("/users/me", usersC.CurrentUser)
 

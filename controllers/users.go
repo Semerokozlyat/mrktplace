@@ -91,3 +91,19 @@ func (u Users) CurrentUser(rw http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(rw, "Current user: %+v", user)
 }
+
+func (u Users) ProcessSignOut(rw http.ResponseWriter, r *http.Request) {
+	tokenCookie, err := r.Cookie("session")
+	if err != nil {
+		http.Redirect(rw, r, "/signin", http.StatusFound)
+		return
+	}
+	err = u.SessionService.Delete(tokenCookie.Value)
+	if err != nil {
+		fmt.Println("Failed to delete session by session cookie: " + err.Error())
+		http.Error(rw, "failed to delete session by session cookie", http.StatusInternalServerError)
+		return
+	}
+	deleteCookie(rw, "session")
+	http.Redirect(rw, r, "/signin", http.StatusFound)
+}

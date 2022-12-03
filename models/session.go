@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/base64"
-	"errors"
 	"fmt"
 
 	"mrktplace/rand"
@@ -41,20 +40,14 @@ func (ss *SessionService) Create(userID int) (*Session, error) {
 		TokenHash: ss.hash(token),
 	}
 	row := ss.DB.QueryRow(`
-	UPDATE sessions
+	INSERT INTO sessions
+	VALUES ($1, $2) ON CONFLICT (user_id) DO
+	UPDATE
 	SET token_hash = $2
-	WHERE user_id = $1 
 	RETURNING id;`, s.UserID, s.TokenHash)
 	err = row.Scan(&s.ID)
-	if errors.Is(err, sql.ErrNoRows) {
-		row = ss.DB.QueryRow(`
-		INSERT INTO sessions (user_id, token_hash)
-		VALUES($1, $2) 
-		RETURNING id;`, s.UserID, s.TokenHash)
-		err = row.Scan(&s.ID)
-	}
 	if err != nil {
-		return nil, fmt.Errorf("insert session data into db: %w", err)
+		return nil, fmt.Errorf("set session data in db: %w", err)
 	}
 	return &s, nil
 }

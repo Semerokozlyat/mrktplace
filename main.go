@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/csrf"
 
 	"mrktplace/controllers"
+	"mrktplace/migrations"
 	"mrktplace/models"
 	"mrktplace/templates"
 	"mrktplace/views"
@@ -32,7 +33,7 @@ func main() {
 	}
 	defer db.Close()
 
-	err = models.Migrate(db, "migrations")
+	err = models.MigrateFromFS(db, migrations.FS, ".")
 	if err != nil {
 		panic(fmt.Errorf("apply DB migrations: %s", err))
 	}

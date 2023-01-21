@@ -3,7 +3,7 @@ module mrktplace
 go 1.19
 
 require (
-	github.com/go-chi/chi/v5 v5.0.7
+	github.com/go-chi/chi/v5 v5.0.8
 	github.com/gorilla/csrf v1.7.1
 	github.com/jackc/pgx/v4 v4.17.2
 	github.com/pressly/goose/v3 v3.7.0

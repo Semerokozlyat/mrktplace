@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"mrktplace/models"
+	"mrktplace/requestcontext"
 )
 
 type Users struct {
@@ -77,15 +78,9 @@ func (u Users) ProcessSignIn(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (u Users) CurrentUser(rw http.ResponseWriter, r *http.Request) {
-	tokenCookie, err := r.Cookie("session")
-	if err != nil {
-		fmt.Println("Failed to read session cookie: " + err.Error())
-		http.Redirect(rw, r, "/signin", http.StatusFound)
-		return
-	}
-	user, err := u.SessionService.User(tokenCookie.Value)
-	if err != nil {
-		fmt.Println("Failed to get user by session cookie: " + err.Error())
+	reqCtx := r.Context()
+	user := requestcontext.User(reqCtx)
+	if user == nil {
 		http.Redirect(rw, r, "/signin", http.StatusFound)
 		return
 	}

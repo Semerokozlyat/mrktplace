@@ -66,6 +66,12 @@ func main() {
 	csrfKey := "23jfnrhy57lh6sbnydpe7503khtq230U"
 	csrfMiddleware := csrf.Protect([]byte(csrfKey), csrf.Secure(false))
 
+	userMiddleware := controllers.UserMiddleware{
+		SessionService: sessService,
+	}
+
+	router.Use(csrfMiddleware, userMiddleware.SetUser)
+
 	fmt.Println("Starting the server on :3000...")
-	http.ListenAndServe(":3000", csrfMiddleware(router))
+	http.ListenAndServe(":3000", router)
 }

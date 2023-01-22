@@ -78,12 +78,7 @@ func (u Users) ProcessSignIn(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (u Users) CurrentUser(rw http.ResponseWriter, r *http.Request) {
-	reqCtx := r.Context()
-	user := requestcontext.User(reqCtx)
-	if user == nil {
-		http.Redirect(rw, r, "/signin", http.StatusFound)
-		return
-	}
+	user := requestcontext.User(r.Context())
 	fmt.Fprintf(rw, "Current user: %+v", user)
 }
 

@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"mrktplace/requestcontext"
 	"net/http"
 
 	"mrktplace/models"
+	"mrktplace/requestcontext"
 )
 
 type UserMiddleware struct {
@@ -25,6 +25,17 @@ func (um UserMiddleware) SetUser(next http.Handler) http.Handler {
 		}
 		reqCtx := r.Context()
 		r = r.WithContext(requestcontext.WithUser(reqCtx, user))
+		next.ServeHTTP(rw, r)
+	})
+}
+
+func (um UserMiddleware) RequireUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		user := requestcontext.User(r.Context())
+		if user == nil {
+			http.Redirect(rw, r, "/signin", http.StatusFound)
+			return
+		}
 		next.ServeHTTP(rw, r)
 	})
 }
